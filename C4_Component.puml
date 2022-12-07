@@ -1,8 +1,8 @@
-' convert it with additional command line argument -DRELATIVE_INCLUDE="." to use locally
+' convert it with additional command line argument -DRELATIVE_INCLUDE="relative/absolute" to use locally
 !if %variable_exists("RELATIVE_INCLUDE")
-  !include %get_variable_value("RELATIVE_INCLUDE")/C4_Container.puml
+  !include ./C4_Container.puml
 !else
-  !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+  !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/v2.5.0/C4_Container.puml
 !endif
 
 ' Scope: A single container.
@@ -27,17 +27,17 @@ UpdateElementStyle("component", $COMPONENT_BG_COLOR, $COMPONENT_FONT_COLOR, $COM
 UpdateElementStyle("external_component", $EXTERNAL_COMPONENT_BG_COLOR, $COMPONENT_FONT_COLOR, $EXTERNAL_COMPONENT_BORDER_COLOR)
 
 ' shortcuts with default colors
-!unquoted procedure AddComponentTag($tagStereo, $bgColor=$COMPONENT_BG_COLOR, $fontColor=$ELEMENT_FONT_COLOR, $borderColor=$COMPONENT_BORDER_COLOR, $shadowing="", $shape="", $sprite="", $techn="", $legendText="", $legendSprite="")
-  AddElementTag($tagStereo, $bgColor, $fontColor, $borderColor, $shadowing, $shape, $sprite, $techn, $legendText, $legendSprite)
+!unquoted procedure AddComponentTag($tagStereo, $bgColor="", $fontColor="", $borderColor="", $shadowing="", $shape="", $sprite="", $techn="", $legendText="", $legendSprite="")
+  $addElementTagInclReuse("component", $tagStereo, $bgColor, $fontColor, $borderColor, $shadowing, $shape, $sprite, $techn, $legendText, $legendSprite)
 !endprocedure
-!unquoted procedure AddExternalComponentTag($tagStereo, $bgColor=$EXTERNAL_COMPONENT_BG_COLOR, $fontColor=$ELEMENT_FONT_COLOR, $borderColor=$EXTERNAL_COMPONENT_BORDER_COLOR, $shadowing="", $shape="", $sprite="", $techn="", $legendText="", $legendSprite="")
-  AddElementTag($tagStereo, $bgColor, $fontColor, $borderColor, $shadowing, $shape, $sprite, $techn, $legendText, $legendSprite)
+!unquoted procedure AddExternalComponentTag($tagStereo, $bgColor="", $fontColor="", $borderColor="", $shadowing="", $shape="", $sprite="", $techn="", $legendText="", $legendSprite="")
+  $addElementTagInclReuse("external_component", $tagStereo, $bgColor, $fontColor, $borderColor, $shadowing, $shape, $sprite, $techn, $legendText, $legendSprite)
 !endprocedure
 
 ' Layout
 ' ##################################
 
-SetDefaultLegendEntries("person\nsystem\ncontainer\ncomponent\nexternal_person\nexternal_system\nexternal_container\nexternal_component")
+SetDefaultLegendEntries("person\nsystem\ncontainer\ncomponent\nexternal_person\nexternal_system\nexternal_container\nexternal_component\nenterprise_boundary\nsystem_boundary\ncontainer_boundary\nboundary")
 
 !procedure LAYOUT_WITH_LEGEND()
 hide stereotype
@@ -62,9 +62,9 @@ endlegend
   !if ($sprite != "")
     !$component = $component + $getSprite($sprite) + '\n'
   !endif
-  !$component = $component + '==' + $label
+  !$component = $component + '== ' + $breakLabel($label)
   !if ($techn != "")
-    !$component = $component + '\n//<size:' + $TECHN_FONT_SIZE + '>[' + $techn + ']</size>//'
+    !$component = $component + '\n//<size:' + $TECHN_FONT_SIZE + '>[' + $breakTechn($techn, '-1') + ']</size>//'
   !endif
   !if ($descr != "")
     !$component = $component + '\n\n' + $descr
